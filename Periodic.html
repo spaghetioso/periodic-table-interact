@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Periodic Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .table {
+      display: grid;
+      grid-template-columns: repeat(18, 60px);
+      grid-auto-rows: 60px;
+      gap: 5px;
+    }
+    .element {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .element:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+    .element span {
+      font-size: 12px;
+    }
+    .element .symbol {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Colors for categories */
+    .nonmetal { background-color: #76c7c0; }
+    .noble-gas { background-color: #f4a261; }
+    .alkali { background-color: #e76f51; }
+    .alkaline-earth { background-color: #2a9d8f; }
+    .metalloid { background-color: #9b5de5; }
+    .halogen { background-color: #f2cc8f; }
+    .transition { background-color: #ffb703; }
+    .lanthanide { background-color: #6a4c93; }
+    .actinide { background-color: #d62828; }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content h2 {
+      margin-bottom: 15px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Periodic Table</h1>
+  <div class="table" id="periodic-table"></div>
+
+  <div class="modal" id="element-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal">&times;</span>
+      <h2 id="element-name"></h2>
+      <p><strong>Symbol:</strong> <span id="element-symbol"></span></p>
+      <p><strong>Atomic Number:</strong> <span id="element-number"></span></p>
+      <p><strong>Atomic Mass:</strong> <span id="element-mass"></span></p>
+      <p><strong>Category:</strong> <span id="element-category"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const elements = [
+      {number: 1, symbol: "H", name: "Hydrogen", mass: "1.008", category: "nonmetal", x:1, y:1},
+      {number: 2, symbol: "He", name: "Helium", mass: "4.0026", category: "noble-gas", x:18, y:1},
+      {number: 3, symbol: "Li", name: "Lithium", mass: "6.94", category: "alkali", x:1, y:2},
+      {number: 4, symbol: "Be", name: "Beryllium", mass: "9.0122", category: "alkaline-earth", x:2, y:2},
+      {number: 5, symbol: "B", name: "Boron", mass: "10.81", category: "metalloid", x:13, y:2},
+      {number: 6, symbol: "C", name: "Carbon", mass: "12.011", category: "nonmetal", x:14, y:2},
+      {number: 7, symbol: "N", name: "Nitrogen", mass: "14.007", category: "nonmetal", x:15, y:2},
+      {number: 8, symbol: "O", name: "Oxygen", mass: "15.999", category: "nonmetal", x:16, y:2},
+      {number: 9, symbol: "F", name: "Fluorine", mass: "18.998", category: "halogen", x:17, y:2},
+      {number: 10, symbol: "Ne", name: "Neon", mass: "20.180", category: "noble-gas", x:18, y:2},
+      // You can continue adding all elements here...
+    ];
+
+    const table = document.getElementById("periodic-table");
+
+    elements.forEach(el => {
+      const div = document.createElement("div");
+      div.className = `element ${el.category}`;
+      div.style.gridColumn = el.x;
+      div.style.gridRow = el.y;
+      div.innerHTML = `
+        <span class="number">${el.number}</span>
+        <span class="symbol">${el.symbol}</span>
+      `;
+      div.addEventListener("click", () => showElement(el));
+      table.appendChild(div);
+    });
+
+    const modal = document.getElementById("element-modal");
+    const closeModal = document.getElementById("close-modal");
+
+    function showElement(el) {
+      document.getElementById("element-name").innerText = el.name;
+      document.getElementById("element-symbol").innerText = el.symbol;
+      document.getElementById("element-number").innerText = el.number;
+      document.getElementById("element-mass").innerText = el.mass;
+      document.getElementById("element-category").innerText = el.category.replace("-", " ");
+      modal.classList.add("active");
+    }
+
+    closeModal.addEventListener("click", () => {
+      modal.classList.remove("active");
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("active");
+    });
+  </script>
+</body>
+</html>
